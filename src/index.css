@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default, dark;
+}
+
+* {
+  font-family: "Inter", sans-serif;
+}
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary:#171717 ;
+  --color-secondary:#1d3b8b;
+  --color-base-100: #f9f9f9;
+  --color-base-200: #FFFFFF;
+  --color-base-300:#171717;
+  --color-base-content:#737373;
+  --color-mainborder:#e2e8f0;
+  --color-border-outline:#cfcfcf;
+  --color-navlink:#171717;
+  --color-heading:#0a1126;
+  --color-subHeading:#e4e7f190;
+  --color-boxbg:#FFFFFF;
+  --color-accent:#fafafa;
+
+
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  --color-primary:#e5e5e5 ;
+  --color-secondary:#1d3b8b;
+  --color-base-100:#121214;
+  --color-base-200:#0a112640;
+  --color-base-300:#ffffff;
+  --color-base-content:#a1a1a1;
+  --color-mainborder:#94a3b810;
+  --color-border-outline:#262626;
+  --color-navlink:#fafafa;
+  --color-heading:#fafafa;
+  --color-subHeading:#252525;
+  --color-boxbg:#0a0a0a;
+  --color-accent:#000000;
+
+}
+
+@theme{
+    --color-mainborder:#e2e8f0;
+    --color-border-outline:#94a3b880;
+    --color-navlink:#0a1126;
+    --color-heading:#0a1126;
+    --color-subHeading:#e4e7f1;
+    --color-boxbg:#FFFFFF;
+    --color-accent:#fafafa;
+
+}

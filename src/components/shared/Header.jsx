@@ -2,12 +2,12 @@ import { Bell, LayoutDashboard, User } from "lucide-react";
 import { use } from "react";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import { Link, NavLink } from "react-router";
-import { Slide, toast } from "react-toastify";
 import darkLogo from "../../assets/logo-dark.png";
 import lightLogo from "../../assets/logo-light.png";
 import userImg from "../../assets/user.png";
 import { ThemeContext } from "../../context/themeContext/ThemeContext";
 import useAuth from "../../hooks/useAuth";
+import Toast from "../toast/Toast";
 
 const Header = () => {
   // const [darkMode, setDarkMode] = useState(false);
@@ -125,18 +125,10 @@ const Header = () => {
   const handleSignOut = () => {
     userSignout()
       .then(() => {
-        toast.success("Logout successful ", {
-          autoClose: 3000,
-          hideProgressBar: true,
-          transition: Slide,
-        });
+        Toast({ type: "success", message: "Logout successful" });
       })
       .catch((error) => {
-        toast.error(error.message, {
-          autoClose: 3000,
-          hideProgressBar: true,
-          transition: Slide,
-        });
+        Toast({ type: "error", message: error.message });
       });
   };
   return (
@@ -213,7 +205,7 @@ const Header = () => {
                 className="theme-controller"
                 value="dark"
                 checked={isDark}
-                onClick={toggleTheme}
+                onChange={toggleTheme}
               />
 
               <svg
@@ -265,31 +257,31 @@ const Header = () => {
             </span>
           </div>
           {/* profile dropdown */}
-          <div className=" lg:flex  flex-col hidden dropdown">
-            {user && (
+          {user && (
+            <div className=" lg:flex  flex-col hidden dropdown">
               <div role="button" tabIndex={0} className="group">
                 <img
                   src={user ? user?.photoURL : userImg}
                   className="hidden ring-offset-base-100 sm:inline ring-btn w-10 h-10 rounded-full ring-1 ring-offset-3 cursor-pointer"
                 />
               </div>
-            )}
-            <div
-              className={`absolute top-20 right-0 p-3 shadow rounded-lg dropdown-content z-[1] w-auto whitespace-nowrap bg-boxbg`}
-            >
-              <ul className="z-1 space-y-3">
-                {navLinkDropdown}
-                <li>
-                  <button
-                    onClick={handleSignOut}
-                    className="btn bg-primary text-accent shadow-none px-5 sm:px-10 flex items-center"
-                  >
-                    <CiLogout size={22} /> Logout
-                  </button>
-                </li>
-              </ul>
+              <div
+                className={`absolute top-20 right-0 p-3 shadow rounded-lg dropdown-content z-[1] w-auto whitespace-nowrap bg-boxbg`}
+              >
+                <ul className="z-1 space-y-3">
+                  {navLinkDropdown}
+                  <li>
+                    <button
+                      onClick={handleSignOut}
+                      className="btn bg-primary text-accent shadow-none px-5 sm:px-10 flex items-center"
+                    >
+                      <CiLogout size={22} /> Logout
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
+          )}
 
           {!user && (
             <Link

@@ -3,67 +3,88 @@ import { AiOutlineEye } from "react-icons/ai";
 import { GoLock, GoMail } from "react-icons/go";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router";
-import { Slide, toast } from "react-toastify";
 import darkIcon from "../../assets/fav-dark.png";
 import lightIcon from "../../assets/favicon.png";
 import { ThemeContext } from "../../context/themeContext/ThemeContext";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "react-hook-form";
+import Toast from "../../components/toast/Toast";
+// import useAxios from "../../hooks/useAxios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 const Login = () => {
   const [seePasswor, setSeepassword] = useState(false);
-  const {userLogin,googleSignin} = useAuth();
+  const { userLogin, googleSignin } = useAuth();
+  const axiosSecure = useAxiosSecure();
   const location = useLocation();
   const navigate = useNavigate();
-  const {isDark} = use(ThemeContext);
+  const { isDark } = use(ThemeContext);
   const {
-      register,
-      handleSubmit,
-      reset,
-      formState: { errors },
-    } = useForm();
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
   const onSubmit = (data) => {
-    userLogin(data.email,data.password)
-    .then(()=>{
-      toast.success("Login successful ", {
-          autoClose: 3000,
-          hideProgressBar: true,
-          transition: Slide,
-        });
-        navigate(location.state?`${location.state}`:"/", { replace: true });
-        reset();
-    })
-    .catch((error)=>{
-      toast.error(error.message, {
-          autoClose: 3000,
-          hideProgressBar: true,
-          transition: Slide,
-        });
-    })
+    userLogin(data.email, data.password)
+      .then(() => {
+        // update last login time
+        axiosSecure
+          .post("/post-user", { email: data.email })
+          .then(() => {
+            Toast({ type: "success", message: "Sign in successful" });
+            navigate(location.state ? `${location.state}` : "/", {
+              replace: true,
+            });
+            reset();
+          })
+          .catch((error) => {
+            Toast({ type: "error", message: error.message });
+          });
+      })
+      .catch((error) => {
+        Toast({ type: "error", message: error.message });
+      });
   };
-
-  const handleGoogleSignin = () =>{
+  // google login
+  const handleGoogleSignin = () => {
     googleSignin()
-    .then(()=>{
-      toast.success("Login successful ", {
-          autoClose: 3000,
-          hideProgressBar: true,
-          transition: Slide,
-        });
-        navigate(location.state?`${location.state}`:"/", { replace: true });
-    })
-    .catch((error)=>{
-      toast.error(error.message, {
-          autoClose: 3000,
-          hideProgressBar: true,
-          transition: Slide,
-        });
-    })
-  }
+      .then((result) => {
+        // if user new (user info send in database)
+        const user = result.user;
+        const userInfo = {
+          email: user.email,
+          name: user.displayName,
+          role: "user",
+          membership: "bronze",
+          joined: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+        };
+        // database post req
+        axiosSecure
+          .post("/post-user", userInfo)
+          .then(() => {
+            Toast({ type: "success", message: "Sign in successful" });
+            navigate(location.state ? `${location.state}` : "/", {
+              replace: true,
+            });
+          })
+          .catch((error) => {
+            Toast({ type: "error", message: error.message });
+          });
+      })
+      .catch((error) => {
+        Toast({ type: "error", message: error.message });
+      });
+  };
   return (
     <div className="bg-base-100 flex justify-center items-center h-auto sm:min-h-200">
       <div className="w-full shadow-0 sm:w-2/3 lg:w-1/3 bg-boxbg sm:shadow p-10 rounded-lg">
         <div>
-          <img className="w-14 mx-auto" src={isDark?darkIcon:lightIcon} alt="" />
+          <img
+            className="w-14 mx-auto"
+            src={isDark ? darkIcon : lightIcon}
+            alt=""
+          />
           <h1 className="text-center text-base-300 text-2xl font-bold mt-3">
             Welcome Back
           </h1>
@@ -130,7 +151,10 @@ const Login = () => {
             Or continue with
           </div>
           {/* login with google */}
-          <button onClick={handleGoogleSignin} className="btn bg-white text-black border-[#e5e5e5] w-full mt-2">
+          <button
+            onClick={handleGoogleSignin}
+            className="btn bg-white text-black border-[#e5e5e5] w-full mt-2"
+          >
             <svg
               aria-label="Google logo"
               width="16"
@@ -164,7 +188,10 @@ const Login = () => {
           <p className="text-center text-base-content text-base mt-4">
             Dont’t Have An Account ?
             <span className="text-primary font-semibold cursor-pointer">
-              <Link to={"/auth/register"} state={location.state}> Sign Up</Link>
+              <Link to={"/auth/register"} state={location.state}>
+                {" "}
+                Sign Up
+              </Link>
             </span>
           </p>
         </div>

@@ -6,16 +6,18 @@ import { FiUser } from "react-icons/fi";
 import { GoLock, GoMail } from "react-icons/go";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router";
-import { Slide, toast } from "react-toastify";
 import darkIcon from "../../assets/fav-dark.png";
 import lightIcon from "../../assets/favicon.png";
 import { ThemeContext } from "../../context/themeContext/ThemeContext";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import Toast from "../../components/toast/Toast";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 const Register = () => {
   const [seePasswor, setSeepassword] = useState(false);
-  const { userSignUp, googleSignin } = useAuth();
+  const { userSignUp, googleSignin, user } = useAuth();
+  const axiosSecure = useAxiosSecure();
   const { isDark } = use(ThemeContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -26,65 +28,85 @@ const Register = () => {
     reset,
     formState: { errors },
   } = useForm();
+  console.log(user);
   const onSubmit = (data) => {
     userSignUp(data.email, data.password)
-      .then(async(userCredential) => {
+      .then(async (userCredential) => {
         // user profile pic upload in imgbb
         const profilePic = data.profilePic[0];
         const formData = new FormData();
         formData.append("image", profilePic);
         const res = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API}`,
-        formData);
+          `https://api.imgbb.com/1/upload?key=${
+            import.meta.env.VITE_IMGBB_API
+          }`,
+          formData
+        );
         const profilePicUrl = res.data.data.url;
         const user = userCredential.user;
         // update User Name and profile  pic in firebase
         updateProfile(user, { displayName: data.name, photoURL: profilePicUrl })
           .then(() => {
-            toast.success("Sign Up successful ", {
-              autoClose: 3000,
-              hideProgressBar: true,
-              transition: Slide,
-            });
-            reset();
-            navigate(location.state ? `${location.state}` : "/", {
-              replace: true,
-            });
+            // send user info in database
+            const userInfo = {
+              email: data.email,
+              name: data.name,
+              role: "user",
+              membership: "bronze",
+              joined: new Date().toISOString(),
+              lastLogin: new Date().toISOString(),
+            };
+            // database post req
+            axiosSecure
+              .post("/post-user", userInfo)
+              .then(() => {
+                Toast({ type: "success", message: "Sign in successful" });
+                reset();
+                navigate(location?.state ? `${location?.state}` : "/", {
+                  replace: true,
+                });
+              })
+              .catch((error) => {
+                Toast({ type: "error", message: error.message });
+              });
           })
           .catch((error) => {
-            toast.error(error.message, {
-              autoClose: 3000,
-              hideProgressBar: true,
-              transition: Slide,
-            });
+            Toast({ type: "error", message: error.message });
           });
       })
       .catch((error) => {
-        toast.error(error.message, {
-          autoClose: 3000,
-          hideProgressBar: true,
-          transition: Slide,
-        });
+        Toast({ type: "error", message: error.message });
       });
   };
 
   // google sign in
   const handleGoogleSignin = () => {
     googleSignin()
-      .then(() => {
-        toast.success("Sing In successful ", {
-          autoClose: 3000,
-          hideProgressBar: true,
-          transition: Slide,
-        });
-        navigate(location.state ? `${location.state}` : "/", { replace: true });
+      .then((result) => {
+        // if user new (user info send in database)
+        const user = result.user;
+        const userInfo = {
+          email: user.email,
+          name: user.displayName,
+          role: "user",
+          membership: "bronze",
+          joined: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+        };
+        // database post req
+        axiosSecure.post("/post-user", userInfo)
+          .then(() => {
+            Toast({ type: "success", message: "Sign in successful" });
+            navigate(location.state ? `${location.state}` : "/", {
+              replace: true,
+            });
+          })
+          .catch((error) => {
+            Toast({ type: "error", message: error.message });
+          });
       })
       .catch((error) => {
-        toast.error(error.message, {
-          autoClose: 3000,
-          hideProgressBar: true,
-          transition: Slide,
-        });
+        Toast({ type: "error", message: error.message });
       });
   };
 

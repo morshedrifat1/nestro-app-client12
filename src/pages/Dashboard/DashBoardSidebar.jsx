@@ -6,16 +6,13 @@ import darkIcon from "../../assets/fav-dark.png";
 import { Link, NavLink } from "react-router";
 import useAuth from "../../hooks/useAuth";
 import { ThemeContext } from "../../context/themeContext/ThemeContext";
-import { AlignLeft } from "lucide-react";
-const DashBoardSidebar = ({ dashboardLinks, setCollapsed, collapsed }) => {
+import { AlignLeft, X } from "lucide-react";
+const DashBoardSidebar = ({ dashboardLinks, collapsed,setHidden }) => {
   const { user } = useAuth();
   const { isDark, toggleTheme } = use(ThemeContext);
   return (
     <div className="relative h-full">
       {/* sidebar header  */}
-      <button onClick={() => setCollapsed(!collapsed)}>
-        <AlignLeft></AlignLeft>
-      </button>
       <div className="flex flex-wrap items-center justify-between">
         <div>
           {/* logo */}
@@ -26,15 +23,13 @@ const DashBoardSidebar = ({ dashboardLinks, setCollapsed, collapsed }) => {
         </div>
         {/* theme controler */}
         <div>
-
-
           {!collapsed && <label className="toggle text-base-content">
             <input
               type="checkbox"
               className="theme-controller"
               value="dark"
               checked={isDark}
-              onClick={toggleTheme}
+              onChange={toggleTheme}
             />
 
             <svg
@@ -78,18 +73,23 @@ const DashBoardSidebar = ({ dashboardLinks, setCollapsed, collapsed }) => {
             </svg>
           </label>}
         </div>
+        {/* sidebar close */}
+        <div>
+            <button className="bg-subHeading p-1 rounded-lg cursor-pointer md:hidden" onClick={() => setHidden(true)}><X></X></button>
+        </div>
       </div>
       {/* sidebar links */}
       <div className="mt-7">
         <ul className="space-y-3">
-          {dashboardLinks.map((link) => (
-            <li>
+          {dashboardLinks.map((link,index) => (
+            <li key={index}>
               <NavLink
                 className={({ isActive }) =>
                   isActive
                     ? "text-navlink bg-subHeading px-1.5 py-1.5 rounded-lg flex items-center gap-2 text-base"
                     : "hover:bg-subHeading px-1.5 py-1.5 rounded-lg text-navlink flex items-center gap-2 text-base"
                 }
+                end={link.url === '/dashboard'}
                 to={link.url}
               >
                 <link.icon size={collapsed ? 20 : 18} />

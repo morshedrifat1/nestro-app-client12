@@ -6,28 +6,25 @@ import {
   Users,
   Megaphone,
   MessageCircleWarning,
-  ChevronRight,
-  AlignJustify,
-  Home,
+  UserRoundCog,
 } from "lucide-react";
 
 import DashBoardSidebar from "./DashBoardSidebar";
-import { useLocation } from "react-router";
+import { Outlet, useLocation } from "react-router";
+import DashboardHeader from "./DashboardHeader";
+import useProfile from "../../hooks/useProfile";
 
 const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [hidden, setHidden] = useState(true);
   const location = useLocation();
-  const dashboardLinks = [
-    {
-      name: "Home",
-      icon: Home,
-      url: "/dashboard",
-    },
+  const { userProfile } = useProfile();
+
+  const baseLinks = [
     {
       name: "My Profile",
       icon: User,
-      url: "/dashboard/my-profile",
+      url: "/dashboard/user-profile",
     },
     {
       name: "My Posts",
@@ -38,6 +35,14 @@ const Dashboard = () => {
       name: "Create Post",
       icon: FilePlus,
       url: "/dashboard/create-post",
+    },
+  ];
+
+  const adminLinks = [
+    {
+      name: "Admin Profile",
+      icon: UserRoundCog,
+      url: '/dashboard/admin-profile',
     },
     {
       name: "Manage Users",
@@ -55,6 +60,9 @@ const Dashboard = () => {
       url: "/dashboard/reported-comments",
     },
   ];
+  const dashboardLinks =
+    userProfile?.role === "admin" ? [...baseLinks, ...adminLinks] : baseLinks;
+
   const currentPage = dashboardLinks.find(
     (page) => page.url == location.pathname
   );
@@ -62,9 +70,9 @@ const Dashboard = () => {
     <div>
       <div className="flex">
         <div
-          className={`${
-            collapsed ? "w-17 p-4" : "w-64 p-5"
-          } ${hidden?'hidden':'inline absolute'} md:inline  h-screen bg-base-100 border-r border-mainborder transition-all duration-500`}
+          className={`${collapsed ? "w-17 p-4" : "w-64 p-5"} ${
+            hidden ? "hidden" : "inline absolute z-10"
+          } md:inline  h-screen bg-base-100 border-r border-mainborder transition-all duration-500 z-20`}
         >
           <DashBoardSidebar
             collapsed={collapsed}
@@ -72,16 +80,15 @@ const Dashboard = () => {
             setHidden={setHidden}
           ></DashBoardSidebar>
         </div>
-        <div className="flex-1  h-screen bg-boxbg">
-          <div className="border-b border-mainborder p-3 flex items-center gap-3">
-            <div className="mt-2">
-              <button className="bg-subHeading p-1 rounded-lg cursor-pointer hidden md:inline" onClick={() => setCollapsed(!collapsed)}><AlignJustify></AlignJustify></button>
-              <button className="bg-subHeading p-1 rounded-lg cursor-pointer md:hidden" onClick={() => setHidden(false)}><AlignJustify></AlignJustify></button>
-            </div>
-            <p className="flex items-center text-sm gap-2.5 mt-1">
-              Dashboard <ChevronRight size={14}></ChevronRight>{" "}
-              {currentPage?.name}
-            </p>
+        <div className="flex-1  h-screen overflow-y-auto bg-boxbg">
+          <DashboardHeader
+            setCollapsed={setCollapsed}
+            collapsed={collapsed}
+            setHidden={setHidden}
+            currentPage={currentPage}
+          ></DashboardHeader>
+          <div className="p-4">
+            <Outlet></Outlet>
           </div>
         </div>
       </div>

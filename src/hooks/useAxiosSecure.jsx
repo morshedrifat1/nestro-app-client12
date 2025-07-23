@@ -1,55 +1,53 @@
+import React, { useEffect } from "react";
 import axios from "axios";
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
 import useAuth from "./useAuth";
+import { useNavigate } from "react-router";
+
+const axiosSecure = axios.create({
+  baseURL: `${import.meta.env.VITE_API}`,
+});
 
 const useAxiosSecure = () => {
   const { user, userSignout } = useAuth();
   const navigate = useNavigate();
-
-  const axiosSecure = axios.create({
-    baseURL: `${import.meta.env.VITE_API}`,
-  });
-
   useEffect(() => {
-    // ✅ Request Interceptor
-    const requestInterceptor = axiosSecure.interceptors.request.use(
+    if (!user) {
+      return;
+    }
+    axiosSecure.interceptors.request.use(
       (config) => {
-        if (user?.accessToken) {
+        if (user) {
           config.headers.Authorization = `Bearer ${user.accessToken}`;
-        }
-        if (user?.email) {
           config.headers.email = user.email;
         }
         return config;
       },
-      (error) => Promise.reject(error)
-    );
-
-    // ✅ Response Interceptor
-    const responseInterceptor = axiosSecure.interceptors.response.use(
-      (res) => res,
       (error) => {
-        const status = error?.response?.status;
-
-        if (status === 403) {
-          navigate("/forbidden");
-        } else if (status === 401) {
-          userSignout()
-            .then(() => navigate("/login"))
-            .catch(() => {});
-        }
-
         return Promise.reject(error);
       }
     );
+  }, [user]);
 
-    // ✅ Clean up interceptors on unmount
-    return () => {
-      axiosSecure.interceptors.request.eject(requestInterceptor);
-      axiosSecure.interceptors.response.eject(responseInterceptor);
-    };
-  }, [user, userSignout, navigate]);
+  axiosSecure.interceptors.response.use(
+    (res) => {
+      return res;
+    },
+    (error) => {
+      const status = error.status;
+      console.log(status);
+      if (status === 403) {
+        navigate("/forbidden");
+      } else if (status === 401) {
+        userSignout()
+          .then(() => {
+            navigate("/auth/login");
+          })
+          .catch(() => {});
+      }
+
+      return Promise.reject(error);
+    }
+  );
 
   return axiosSecure;
 };

@@ -89,7 +89,7 @@ const Header = () => {
                 ? "text-navlink bg-subHeading  px-4 py-1.5 rounded-lg"
                 : "hover:bg-subHeading px-4 py-1.5 rounded-lg text-navlink"
             }
-            to={"/dashboard"}
+            to={"/dashboard/user-profile"}
           >
             Dashboard
           </NavLink>
@@ -112,7 +112,7 @@ const Header = () => {
               ? "text-navlink bg-subHeading  px-4 py-1.5 rounded-lg flex items-center gap-2"
               : "hover:bg-subHeading px-4 py-1.5 rounded-lg text-navlink flex items-center gap-2"
           }
-          to={"/dashboard"}
+          to={"/dashboard/user-profile"}
         >
           <LayoutDashboard></LayoutDashboard> Dashboard
         </NavLink>
@@ -132,8 +132,8 @@ const Header = () => {
       });
   };
   return (
-    <div className="">
-      <div className="navbar max-w-[1420px] rounded-lg mx-auto px-5 h-20">
+    <div className="border border-mainborder">
+      <div className="navbar max-w-[1420px] rounded-lg mx-auto px-5 h-17">
         <div className="navbar-start">
           <div className="dropdown">
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -161,7 +161,7 @@ const Header = () => {
                 <li>
                   <div className="avatar space-x-2 py-2.5">
                     <div className="ring-btn ring-offset-base-100 w-8 h-8 rounded-full ring-1 ring-offset-2">
-                      <img src={user ? user?.photoURL : userImg} />
+                      <img src={user && user?.photoURL} />
                     </div>
                   </div>
                 </li>
@@ -189,14 +189,14 @@ const Header = () => {
           </div>
 
           <Link to={"/"}>
-            <img className="w-40" src={isDark ? darkLogo : lightLogo} alt="" />
+            <img className="w-36" src={isDark ? darkLogo : lightLogo} alt="" />
           </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="flex gap-3">{navLink}</ul>
         </div>
         {/* navbar end */}
-        <div className="navbar-end space-x-3">
+        <div className="navbar-end space-x-4">
           {/* theme controler */}
           <div>
             <label className="toggle text-base-content">
@@ -273,7 +273,7 @@ const Header = () => {
                   <li>
                     <button
                       onClick={handleSignOut}
-                      className="btn bg-primary text-accent shadow-none px-5 sm:px-10 flex items-center"
+                      className="btn w-full bg-primary text-accent shadow-none px-5 sm:px-10 flex items-center"
                     >
                       <CiLogout size={22} /> Logout
                     </button>

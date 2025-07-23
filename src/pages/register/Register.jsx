@@ -16,7 +16,7 @@ import Toast from "../../components/toast/Toast";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 const Register = () => {
   const [seePasswor, setSeepassword] = useState(false);
-  const { userSignUp, googleSignin, user } = useAuth();
+  const {userSignUp, googleSignin} = useAuth();
   const axiosSecure = useAxiosSecure();
   const { isDark } = use(ThemeContext);
   const location = useLocation();
@@ -28,7 +28,6 @@ const Register = () => {
     reset,
     formState: { errors },
   } = useForm();
-  console.log(user);
   const onSubmit = (data) => {
     userSignUp(data.email, data.password)
       .then(async (userCredential) => {
@@ -48,11 +47,12 @@ const Register = () => {
         updateProfile(user, { displayName: data.name, photoURL: profilePicUrl })
           .then(() => {
             // send user info in database
+            console.log(user);
             const userInfo = {
               email: data.email,
               name: data.name,
               role: "user",
-              membership: "bronze",
+              membership: "Bronze",
               joined: new Date().toISOString(),
               lastLogin: new Date().toISOString(),
             };

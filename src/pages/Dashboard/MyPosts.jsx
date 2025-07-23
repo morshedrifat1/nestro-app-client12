@@ -1,11 +1,127 @@
-import React from 'react';
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
+import { Link } from "react-router";
+import { MessageCircleMore, X } from "lucide-react";
+import Swal from "sweetalert2";
+import { useQuery } from "@tanstack/react-query";
+import LoadingSpiner from "../../components/loadingSpiner/LoadingSpiner";
+import NoDataFound from "../../components/noDataFound/NoDataFound";
 
 const MyPosts = () => {
-    return (
-        <div>
-            
+  const axiosSecure = useAxiosSecure();
+  const { user, loader } = useAuth();
+  const {
+    data: posts = [],
+    refetch,
+    isLoading
+  } = useQuery({
+    queryKey: ["userPost", user?.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/posts?email=${user?.email}`);
+      console.log(res);
+      return res.data;
+    },
+  });
+  console.log(posts);
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Delete Post!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosSecure
+          .delete(`/post/${id}`)
+          .then((res) => {
+            if (res.data.deletedCount) {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your Post has been Deleted.",
+                icon: "success",
+              });
+            }
+            refetch();
+          })
+          .catch((error) => {
+            console.error("Delete error:", error);
+            Swal.fire("Error", "Failed to delete post", "error");
+          });
+      }
+    });
+  };
+  return (
+    <>
+      {loader || isLoading? (
+        <LoadingSpiner></LoadingSpiner>
+      ) : posts.length === 0 ? (
+        <NoDataFound
+          title={"No Data Found"}
+          description={"You haven’t posted anything yet."}
+          buttonText={'Create Post'}
+          url={'/dashboard/create-post'}
+        ></NoDataFound>
+      ) : (
+        <div className="overflow-x-auto border border-mainborder rounded-box shadow-2xs shadow-accent">
+          <table className="table ">
+            {/* head */}
+            <thead>
+              <tr>
+                <th className="bg-base-100 text-heading text-sm whitespace-nowrap">
+                  No
+                </th>
+                <th className="bg-base-100 text-heading text-sm whitespace-nowrap">
+                  Title
+                </th>
+                <th className="bg-base-100 text-heading text-sm whitespace-nowrap">
+                  Number of votes
+                </th>
+                <th className="bg-base-100 text-heading text-sm whitespace-nowrap">
+                  Post Comments
+                </th>
+                <th className="bg-base-100 text-heading text-sm whitespace-nowrap">
+                  Delete Post
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* row 1 */}
+              {posts?.map((post, index) => (
+                <tr key={index}>
+                  <th className="text-base-content whitespace-nowrap">
+                    {index + 1}
+                  </th>
+                  <td className="text-base-content whitespace-nowrap">
+                    {post.postTitle}
+                  </td>
+                  <td className="text-base-content whitespace-nowrap">
+                    {post.UpVote + post.DownVote}
+                  </td>
+                  <td className="text-base-content whitespace-nowrap">
+                    <button className="bg-primary text-accent px-4 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer">
+                      Comments <MessageCircleMore size={15}></MessageCircleMore>
+                    </button>
+                  </td>
+
+                  <td className="text-heading whitespace-nowrap">
+                    <button
+                      onClick={() => handleDelete(post._id)}
+                      className="bg-primary text-accent px-4 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer"
+                    >
+                      Delete <X size={17} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-    );
+      )}
+    </>
+  );
 };
 
 export default MyPosts;

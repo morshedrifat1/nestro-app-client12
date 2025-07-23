@@ -9,7 +9,6 @@ import { ThemeContext } from "../../context/themeContext/ThemeContext";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import Toast from "../../components/toast/Toast";
-// import useAxios from "../../hooks/useAxios";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 const Login = () => {
   const [seePasswor, setSeepassword] = useState(false);

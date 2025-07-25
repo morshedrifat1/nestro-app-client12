@@ -26,7 +26,7 @@ const Login = () => {
   const onSubmit = (data) => {
     userLogin(data.email, data.password)
       .then(() => {
-        // update last login time
+          // update last login time
         axiosSecure
           .post("/post-user", { email: data.email })
           .then(() => {

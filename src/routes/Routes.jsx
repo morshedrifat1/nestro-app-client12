@@ -15,6 +15,7 @@ import AdminRoutes from "./AdminRoutes";
 import PrivateRoutes from "./PrivateRoutes";
 import UserProfile from "../pages/Dashboard/UserProfile";
 import AdminProfile from "../pages/Dashboard/AdminProfile/adminProfile/AdminProfile";
+import PostDetails from "../pages/postDetails/PostDetails";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: Home },
       { path: "membership", Component: Membership },
+      { path: "post-details/:id", Component: PostDetails },
       { path: "auth/login", Component: Login },
       { path: "auth/register", Component: Register },
     ],

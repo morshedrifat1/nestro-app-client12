@@ -6,9 +6,9 @@ import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpiner from "../../components/loadingSpiner/LoadingSpiner";
-import MambershipPrice from "../Membership/MambershipPrice";
 import Membership from "../Membership/Membership";
 import { useEffect, useState } from "react";
+import useAxios from "../../hooks/useAxios";
 const CreatePost = () => {
   const { user, loader } = useAuth();
   const axiosSecure = useAxiosSecure();
@@ -35,11 +35,20 @@ const CreatePost = () => {
     formState: { errors },
   } = useForm();
 
-  const options = [
-    { value: "JS", label: "Js" },
-    { value: "React", label: "React" },
-    { value: "Express Js", label: "Express Js" },
-  ];
+  // get tags from database
+  const axios = useAxios();
+  const { data: tags = [] } = useQuery({
+    queryKey: "tags",
+    queryFn: async () => {
+      const res = await axios.get("/tags");
+      return res.data;
+    },
+  });
+  // create tag option
+  const options = tags.map((tag) => ({
+    value: tag.tag,
+    label: tag.tag,
+  }));
   const onSubmit = (data) => {
     const postTag = data.postTags.map((tag) => tag.value);
     const { postTags, ...rest } = data;
@@ -149,7 +158,7 @@ const CreatePost = () => {
                   )}
                 />
               </div>
-              {/* error message for email */}
+              {/* error message for post tag */}
               {errors.postTags?.type === "required" && (
                 <p className="text-red-700 mt-1.5">
                   Select tag for your post *

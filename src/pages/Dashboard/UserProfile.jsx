@@ -42,7 +42,7 @@ const UserProfile = () => {
                 {userProfile.membership === "Bronze" ? (
                   <Award size={15}></Award>
                 ) : (
-                  <Crown></Crown>
+                  <Crown size={15}></Crown>
                 )}
                 {userProfile.membership}
               </p>

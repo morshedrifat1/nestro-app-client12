@@ -1,7 +1,12 @@
 import React from 'react';
 import { BadgeCheck, Crown } from "lucide-react";
+import { useNavigate } from 'react-router';
 
 const MambershipPrice = () => {
+  const navigate = useNavigate();
+  const handlePay = () =>{
+    navigate('/payment')
+  }
     return (
         <div className="mt-5 max-w-86">
           <div className="bg-boxbg backdrop-blur-md backdrop-saturate-150 border-3 border-[#7877c6] rounded-2xl p-5">
@@ -41,7 +46,7 @@ const MambershipPrice = () => {
                 <BadgeCheck size={17} /> Higher post and upload limits
               </li>
             </ul>
-            <button className="bg-base-300 text-base-100 w-full mt-4 py-2 rounded-xl cursor-pointer">Get started</button>
+            <button onClick={handlePay} className="bg-base-300 text-base-100 w-full mt-4 py-2 rounded-xl cursor-pointer">Get started</button>
           </div>
         </div>
     );

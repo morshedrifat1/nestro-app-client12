@@ -23,58 +23,44 @@ const Login = () => {
     reset,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => {
-    userLogin(data.email, data.password)
-      .then(() => {
-          // update last login time
-        axiosSecure
-          .post("/post-user", { email: data.email })
-          .then(() => {
-            Toast({ type: "success", message: "Sign in successful" });
-            navigate(location.state ? `${location.state}` : "/", {
-              replace: true,
-            });
-            reset();
-          })
-          .catch((error) => {
-            Toast({ type: "error", message: error.message });
-          });
-      })
-      .catch((error) => {
-        Toast({ type: "error", message: error.message });
-      });
-  };
+const onSubmit = async (data) => {
+  try {
+    await userLogin(data.email, data.password);
+    await axiosSecure.post("/post-user", { email: data.email });
+
+    Toast({ type: "success", message: "Sign in successful" });
+    navigate(location.state ? `${location.state}` : "/", { replace: true });
+    reset();
+  } catch (error) {
+    Toast({ type: "error", message: error.message });
+  }
+};
   // google login
-  const handleGoogleSignin = () => {
-    googleSignin()
-      .then((result) => {
-        // if user new (user info send in database)
-        const user = result.user;
-        const userInfo = {
-          email: user.email,
-          name: user.displayName,
-          role: "user",
-          membership: "bronze",
-          joined: new Date().toISOString(),
-          lastLogin: new Date().toISOString(),
-        };
-        // database post req
-        axiosSecure
-          .post("/post-user", userInfo)
-          .then(() => {
-            Toast({ type: "success", message: "Sign in successful" });
-            navigate(location.state ? `${location.state}` : "/", {
-              replace: true,
-            });
-          })
-          .catch((error) => {
-            Toast({ type: "error", message: error.message });
-          });
-      })
-      .catch((error) => {
-        Toast({ type: "error", message: error.message });
-      });
-  };
+const handleGoogleSignin = async () => {
+  try {
+    const result = await googleSignin();
+    const user = result.user;
+
+    const userInfo = {
+      email: user.email,
+      name: user.displayName,
+      role: "user",
+      membership: "Bronze",
+      joined: new Date().toISOString(),
+      lastLogin: new Date().toISOString(),
+    };
+
+    await axiosSecure.post("/post-user", userInfo);
+
+    Toast({ type: "success", message: "Sign in successful" });
+    navigate(location.state ? `${location.state}` : "/", {
+      replace: true,
+    });
+  } catch (error) {
+    Toast({ type: "error", message: error.message });
+  }
+};
+
   return (
     <div className="bg-base-100 flex justify-center items-center h-auto sm:min-h-200">
       <div className="w-full shadow-0 sm:w-2/3 lg:w-1/3 bg-boxbg sm:shadow p-10 rounded-lg">

@@ -11,7 +11,6 @@ import lightIcon from "../../assets/favicon.png";
 import { ThemeContext } from "../../context/themeContext/ThemeContext";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import Toast from "../../components/toast/Toast";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 const Register = () => {
@@ -28,88 +27,80 @@ const Register = () => {
     reset,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => {
-    userSignUp(data.email, data.password)
-      .then(async (userCredential) => {
-        // user profile pic upload in imgbb
-        const profilePic = data.profilePic[0];
-        const formData = new FormData();
-        formData.append("image", profilePic);
-        const res = await axios.post(
-          `https://api.imgbb.com/1/upload?key=${
-            import.meta.env.VITE_IMGBB_API
-          }`,
-          formData
-        );
-        const profilePicUrl = res.data.data.url;
-        const user = userCredential.user;
-        // update User Name and profile  pic in firebase
-        updateProfile(user, { displayName: data.name, photoURL: profilePicUrl })
-          .then(() => {
-            // send user info in database
-            console.log(user);
-            const userInfo = {
-              email: data.email,
-              name: data.name,
-              role: "user",
-              membership: "Bronze",
-              joined: new Date().toISOString(),
-              lastLogin: new Date().toISOString(),
-            };
-            // database post req
-            axiosSecure
-              .post("/post-user", userInfo)
-              .then(() => {
-                Toast({ type: "success", message: "Sign in successful" });
-                reset();
-                navigate(location?.state ? `${location?.state}` : "/", {
-                  replace: true,
-                });
-              })
-              .catch((error) => {
-                Toast({ type: "error", message: error.message });
-              });
-          })
-          .catch((error) => {
-            Toast({ type: "error", message: error.message });
-          });
-      })
-      .catch((error) => {
-        Toast({ type: "error", message: error.message });
-      });
-  };
+  
+  const onSubmit = async (data) => {
+  try {
+    // 1. User sign up
+    const userCredential = await userSignUp(data.email, data.password);
+    const user = userCredential.user;
+
+    // 2. Upload profile picture to imgbb
+    const profilePic = data.profilePic[0];
+    const formData = new FormData();
+    formData.append("image", profilePic);
+
+    const res = await axios.post(
+      `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API}`,
+      formData
+    );
+    const profilePicUrl = res.data.data.url;
+
+    // 3. Update Firebase user profile
+    await updateProfile(user, {
+      displayName: data.name,
+      photoURL: profilePicUrl,
+    });
+
+    // 4. Prepare user info for database
+    const userInfo = {
+      email: data.email,
+      name: data.name,
+      role: "user",
+      membership: "Bronze",
+      joined: new Date().toISOString(),
+      lastLogin: new Date().toISOString(),
+    };
+
+    // 5. Save user to your database
+    await axiosSecure.post("/post-user", userInfo);
+
+    // 6. Success actions
+    Toast({ type: "success", message: "Sign in successful" });
+    reset();
+    navigate(location?.state ? `${location?.state}` : "/", {
+      replace: true,
+    });
+  } catch (error) {
+    Toast({ type: "error", message: error.message });
+  }
+};
+
 
   // google sign in
-  const handleGoogleSignin = () => {
-    googleSignin()
-      .then((result) => {
-        // if user new (user info send in database)
-        const user = result.user;
-        const userInfo = {
-          email: user.email,
-          name: user.displayName,
-          role: "user",
-          membership: "bronze",
-          joined: new Date().toISOString(),
-          lastLogin: new Date().toISOString(),
-        };
-        // database post req
-        axiosSecure.post("/post-user", userInfo)
-          .then(() => {
-            Toast({ type: "success", message: "Sign in successful" });
-            navigate(location.state ? `${location.state}` : "/", {
-              replace: true,
-            });
-          })
-          .catch((error) => {
-            Toast({ type: "error", message: error.message });
-          });
-      })
-      .catch((error) => {
-        Toast({ type: "error", message: error.message });
-      });
-  };
+const handleGoogleSignin = async () => {
+  try {
+    const result = await googleSignin();
+    const user = result.user;
 
+    const userInfo = {
+      email: user.email,
+      name: user.displayName,
+      role: "user",
+      membership: "Bronze",
+      joined: new Date().toISOString(),
+      lastLogin: new Date().toISOString(),
+    };
+
+    await axiosSecure.post("/post-user", userInfo);
+
+    Toast({ type: "success", message: "Sign in successful" });
+    navigate(location.state ? `${location.state}` : "/", {
+      replace: true,
+    });
+  } catch (error) {
+    Toast({ type: "error", message: error.message });
+  }
+};
   return (
     <div className="bg-base-100 flex justify-center items-center h-auto sm:min-h-230">
       <div className="w-full shadow-0 sm:w-2/3 lg:w-1/3 bg-boxbg sm:shadow p-10 rounded-lg">

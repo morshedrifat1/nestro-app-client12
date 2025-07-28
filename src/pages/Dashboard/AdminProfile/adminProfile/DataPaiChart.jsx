@@ -3,19 +3,18 @@ import React from "react"
 import { TrendingUp } from "lucide-react"
 import { Pie, PieChart, Tooltip, ResponsiveContainer } from "recharts"
 
-// Chart Data
-const chartData = [
-  { key: "Posts", total: 275, fill: "#2b7fff" },
-  { key: "Comments", total: 200, fill: "#8ec5ff" },
-  { key: "Users", total: 187, fill: "#193cb8" },
-]
 
-export default function DataPaiChart() {
+const DataPaiChart=({totalPost,totalUser,totalComment})=> {
+  const chartData = [
+  { key: "Posts", total: totalPost, fill: "#2b7fff" },
+  { key: "Comments", total: totalComment, fill: "#8ec5ff" },
+  { key: "Users", total: totalUser, fill: "#193cb8" },
+]
   return (
-    <div className="p-5 border border-mainborder rounded-lg shadow-2xs bg-boxbg flex flex-col lg:max-w-sm w-full">
+    <div className="p-5 border border-mainborder rounded-lg shadow-2xs bg-boxbg flex flex-col">
       <div className="text-center mb-2">
         <h2 className="text-xl text-base-300 font-semibold">Pie Chart - Label</h2>
-        <p className="text-sm text-base-content">January - June 2024</p>
+        <p className="text-sm text-base-content">January - June 2025</p>
       </div>
       <div className="flex-1">
         <ResponsiveContainer width="100%" height={250}>
@@ -36,8 +35,10 @@ export default function DataPaiChart() {
           Trending up by 5.2% this month
           <TrendingUp className="w-4 h-4 text-green-600" />
         </div>
-        <p className="text-base-content mt-2">Showing total visitors for the last 6 months</p>
+        <p className="text-base-content mt-2">Showing Data for the last 6 months</p>
       </div>
     </div>
   )
 }
+
+export default DataPaiChart

@@ -13,7 +13,7 @@ import { Link, useNavigate } from "react-router";
 import Toast from "../../../components/toast/Toast";
 import useAuth from "../../../hooks/useAuth";
 
-const PostCard = ({ post, refetch }) => {
+const PostCard = ({ post, refetch,setSearchTag }) => {
     const {user} = useAuth()
   const axiosSecure = useAxiosSecure();
     const navigate = useNavigate();
@@ -40,6 +40,7 @@ const PostCard = ({ post, refetch }) => {
   const getTimeAgo = (createdAt) => {
     return formatDistanceToNow(new Date(createdAt), { addSuffix: true });
   };
+
   return (
     <div className="bg-boxbg border border-mainborder rounded-lg p-5">
       <div>
@@ -80,7 +81,7 @@ const PostCard = ({ post, refetch }) => {
       </p>
       <div className="flex flex-wrap gap-3 mt-3">
         {post?.postTag.map((tag) => (
-          <button className="border bg-subHeading border-mainborder px-2.5 text-navlink text-sm rounded-full cursor-pointer">
+          <button onClick={()=>setSearchTag(tag)} className="border bg-subHeading border-mainborder px-2.5 text-navlink text-sm rounded-full cursor-pointer">
             # {tag}
           </button>
         ))}
@@ -101,10 +102,10 @@ const PostCard = ({ post, refetch }) => {
             <ChevronDown size={18}></ChevronDown>
             {post?.DownVote}
           </button>
-          <button className="flex items-center gap-2 text-base-300 text-sm bg-subHeading/50 rounded-md p-1 px-2 cursor-pointer">
+          <Link to={`/post-details/${post?._id}`} className="flex items-center gap-2 text-base-300 text-sm bg-subHeading/50 rounded-md p-1 px-2 cursor-pointer">
             <MessageCircle size={18}></MessageCircle>
-            {post?.UpVote}
-          </button>
+            {post?.Comments}
+          </Link>
         </div>
         <div>
           <button onClick={handleCopy} className="flex items-center gap-2 text-base-300 text-sm bg-subHeading/50 rounded-md p-1 px-2 cursor-pointer">

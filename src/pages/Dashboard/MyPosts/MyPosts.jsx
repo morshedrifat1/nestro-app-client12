@@ -1,11 +1,11 @@
-import useAxiosSecure from "../../hooks/useAxiosSecure";
-import useAuth from "../../hooks/useAuth";
-import { Link } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 import { MessageCircleMore, X } from "lucide-react";
 import Swal from "sweetalert2";
-import { useQuery } from "@tanstack/react-query";
-import LoadingSpiner from "../../components/loadingSpiner/LoadingSpiner";
-import NoDataFound from "../../components/noDataFound/NoDataFound";
+import LoadingSpiner from "../../../components/loadingSpiner/LoadingSpiner";
+import NoDataFound from "../../../components/noDataFound/NoDataFound";
+import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { Link } from "react-router";
 
 const MyPosts = () => {
   const axiosSecure = useAxiosSecure();
@@ -53,6 +53,7 @@ const MyPosts = () => {
       }
     });
   };
+  console.log(posts);
   return (
     <>
       {loader || isLoading? (
@@ -101,9 +102,9 @@ const MyPosts = () => {
                     {post.UpVote + post.DownVote}
                   </td>
                   <td className="text-base-content whitespace-nowrap">
-                    <button className="bg-primary text-accent px-4 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer">
-                      Comments <MessageCircleMore size={15}></MessageCircleMore>
-                    </button>
+                    <Link to={`/dashboard/comments/${post._id}`} className="bg-primary text-accent px-4 py-1.5 rounded-lg inline-flex items-center gap-2 cursor-pointer">
+                      Comments {post?.postComments.length} <MessageCircleMore size={15}></MessageCircleMore>
+                    </Link>
                   </td>
 
                   <td className="text-heading whitespace-nowrap">

@@ -8,11 +8,24 @@ import userImg from "../../assets/user.png";
 import { ThemeContext } from "../../context/themeContext/ThemeContext";
 import useAuth from "../../hooks/useAuth";
 import Toast from "../toast/Toast";
+import useProfile from "../../hooks/useProfile";
+import useAxios from "../../hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
 
 const Header = () => {
   // const [darkMode, setDarkMode] = useState(false);
   const { isDark, toggleTheme } = use(ThemeContext);
   const { user, userSignout } = useAuth();
+  const { userProfile } = useProfile();
+  // total anouncements
+  const axios = useAxios();
+  const { data: announcement = [] } = useQuery({
+    queryKey: "announcement",
+    queryFn: async () => {
+      const res = await axios.get("/announcements");
+      return res.data;
+    },
+  });
   const navLink = (
     <>
       <li className="text-base font-medium ">
@@ -27,19 +40,8 @@ const Header = () => {
           Home
         </NavLink>
       </li>
-      <li className="text-base font-medium">
-        <NavLink
-          className={({ isActive }) =>
-            isActive
-              ? "text-navlink bg-subHeading  px-4 py-1.5 rounded-lg"
-              : "hover:bg-subHeading px-4 py-1.5 rounded-lg text-navlink"
-          }
-          to={"/membership"}
-        >
-          Membership
-        </NavLink>
-      </li>
-      {!user && (
+
+      {(!user || userProfile.membership !== "Gold")&& (
         <li className="text-base font-medium">
           <NavLink
             className={({ isActive }) =>
@@ -47,9 +49,9 @@ const Header = () => {
                 ? "text-navlink bg-subHeading  px-4 py-1.5 rounded-lg"
                 : "hover:bg-subHeading px-4 py-1.5 rounded-lg text-navlink"
             }
-            to={"/auth/login"}
+            to={"/membership"}
           >
-            Join US
+            Membership
           </NavLink>
         </li>
       )}
@@ -179,7 +181,7 @@ const Header = () => {
                       className="btn bg-primary text-accent shadow-none px-5 sm:px-10 flex items-center"
                       to={"/auth/login"}
                     >
-                      Login
+                      Join US
                       <CiLogin size={22} />
                     </Link>
                   )}
@@ -253,7 +255,7 @@ const Header = () => {
           <div className="relative w-fit">
             <Bell size={24} />
             <span className="absolute -top-1 -right-1 text-[10px] bg-red-600 text-white rounded-full w-4 h-4 flex items-center justify-center">
-              0
+              {announcement.length}
             </span>
           </div>
           {/* profile dropdown */}
@@ -285,10 +287,10 @@ const Header = () => {
 
           {!user && (
             <Link
-              className="bg-primary py-2 rounded-xl text-accent shadow-none px-5 sm:px-5 sm:flex items-center hidden"
+              className="bg-primary py-2 rounded-xl text-accent shadow-none px-5 sm:px-5 sm:flex items-center hidden gap-2"
               to={"/auth/login"}
             >
-              Login
+              Join US
               <CiLogin size={22} />
             </Link>
           )}

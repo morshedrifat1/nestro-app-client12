@@ -1,12 +1,25 @@
 import React from "react";
 import { BadgeCheck, ShieldCheck } from "lucide-react";
-import useProfile from "../../../../hooks/useProfile";
 import useAuth from "../../../../hooks/useAuth";
 import DataPaiChart from "./DataPaiChart";
+import TagAddForm from "./TagAddForm";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
+import LoadingSpiner from "../../../../components/loadingSpiner/LoadingSpiner";
 
 const AdminProfile = () => {
   const { user, loader } = useAuth();
-  const {userProfile,isLoading} = useProfile();
+  const axiosSecure = useAxiosSecure();
+  const {
+    data: adminProfile,
+    isLoading,
+  } = useQuery({
+    queryKey: ["comments", user.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/admin-profile?email=${user.email}`);
+      return res.data;
+    },
+  });
   return (
     <>
       {loader || isLoading ? (
@@ -48,25 +61,25 @@ const AdminProfile = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
             <div className="text-center bg-boxbg shadow-2xs border border-mainborder py-4 rounded-lg space-y-1">
-              <h1 className="text-base-300 text-2xl font-bold">{userProfile.totalPost}</h1>
+              <h1 className="text-base-300 text-2xl font-bold">{adminProfile.totalPost}</h1>
               <p className="text-lg font-normal text-navlink px-3">
                 Total Posts
               </p>
             </div>
             <div className="text-center bg-boxbg shadow-2xs border border-mainborder py-4 rounded-lg space-y-1">
-              <h1 className="text-base-300 text-2xl font-bold">01</h1>
+              <h1 className="text-base-300 text-2xl font-bold">{adminProfile.totalVotes}</h1>
               <p className="text-lg font-normal text-navlin px-3">
                 Total Votes
               </p>
             </div>
             <div className="text-center bg-boxbg shadow-2xs border border-mainborder py-4 rounded-lg space-y-1">
-              <h1 className="text-base-300 text-2xl font-bold">01</h1>
+              <h1 className="text-base-300 text-2xl font-bold">{adminProfile.totalComment}</h1>
               <p className="text-lg font-normal text-navlink px-3">
                 Comments Received
               </p>
             </div>
             <div className="text-center bg-boxbg shadow-2xs border border-mainborder py-4 rounded-lg space-y-1">
-              <h1 className="text-base-300 text-2xl font-bold">01</h1>
+              <h1 className="text-base-300 text-2xl font-bold">{adminProfile.totalUser}</h1>
               <p className="text-lg font-normal text-navlink px-3">
                 Total Users
               </p>
@@ -74,8 +87,9 @@ const AdminProfile = () => {
           </div>
 
         {/* data pai chart */}
-         <div className="mt-5">
-           <DataPaiChart></DataPaiChart>
+         <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-5 items-start">
+           <DataPaiChart totalComment={adminProfile.totalComment} totalUser={adminProfile.totalUser} totalPost={adminProfile.totalPost}></DataPaiChart>
+           <TagAddForm></TagAddForm>
          </div>
         </div>
       )}

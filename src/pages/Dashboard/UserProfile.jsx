@@ -2,11 +2,17 @@ import { Award, BadgeCheck, Crown } from "lucide-react";
 import LoadingSpiner from "../../components/loadingSpiner/LoadingSpiner";
 import useAuth from "../../hooks/useAuth";
 import useProfile from "../../hooks/useProfile";
+import { formatDistanceToNow } from "date-fns";
+import { Link } from "react-router";
 
 const UserProfile = () => {
   const { user, loader } = useAuth();
 
-  const {userProfile,isLoading} = useProfile();
+  const { userProfile, isLoading } = useProfile();
+  // post date
+      const getTimeAgo = (createdAt) => {
+        return formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+      };
   return (
     <>
       {loader || isLoading ? (
@@ -48,28 +54,6 @@ const UserProfile = () => {
               </p>
             </div>
           </div>
-          {/* user activity */}
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-5">
-            <div className="text-center bg-boxbg shadow-2xs border border-mainborder py-4 rounded-lg space-y-1">
-              <h1 className="text-base-300 text-2xl font-bold">{userProfile.totalPost}</h1>
-              <p className="text-lg font-normal text-navlink px-3">
-                Total Posts
-              </p>
-            </div>
-            <div className="text-center bg-boxbg shadow-2xs border border-mainborder py-4 rounded-lg space-y-1">
-              <h1 className="text-base-300 text-2xl font-bold">01</h1>
-              <p className="text-lg font-normal text-navlin px-3">
-                Total Votes
-              </p>
-            </div>
-            <div className="text-center bg-boxbg shadow-2xs border border-mainborder py-4 rounded-lg space-y-1">
-              <h1 className="text-base-300 text-2xl font-bold">01</h1>
-              <p className="text-lg font-normal text-navlink px-3">
-                Comments Received
-              </p>
-            </div>
-          </div>
 
           {/* Membership Status */}
           <div className="border border-mainborder bg-boxbg mt-5 p-5 rounded-lg">
@@ -103,6 +87,18 @@ const UserProfile = () => {
                     : "Unlimited posts, Priority support"}
                 </p>
               </div>
+            </div>
+          </div>
+          {/* recent posts */}
+          <div className="border border-mainborder bg-boxbg mt-5 p-5 rounded-lg">
+            <h1 className="text-base-300 text-lg font-bold">Recent Posts</h1>
+            <div className="space-y-4 mt-4">
+              {userProfile?.recentPosts?.map((post)=>
+              <div className="bg-subHeading p-4 rounded-lg">
+                <h1 className="text-base-300 text-base font-medium">{post.postTitle} <span className="text-sm font-normal">• {getTimeAgo(post?.postTime)}</span></h1>
+                <p className="mt-1 text-sm font-normal text-base-content">{post.postDescription}</p>
+                <Link to={`/post-details/${post._id}`} className="bg-base-300 text-accent px-3 py-1 rounded-lg inline-block mt-2">Details</Link>
+              </div>)}
             </div>
           </div>
         </div>

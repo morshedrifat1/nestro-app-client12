@@ -6,21 +6,15 @@ import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpiner from "../../components/loadingSpiner/LoadingSpiner";
-import Membership from "../Membership/Membership";
 import { useEffect, useState } from "react";
 import useAxios from "../../hooks/useAxios";
+import Membership from "../Membership/Membership";
+import useProfile from "../../hooks/useProfile";
 const CreatePost = () => {
   const { user, loader } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [totalPost, setTotalPost] = useState(0);
-  // fetch user profile data for count post
-  const { data: userProfile = {}, isLoading } = useQuery({
-    queryKey: ["userProfile", user?.email],
-    queryFn: async () => {
-      const res = await axiosSecure.get(`/user-profile?email=${user?.email}`);
-      return res.data;
-    },
-  });
+  const { userProfile,isLoading} = useProfile();
   // set total post in state
   useEffect(() => {
     if (userProfile?.totalPost) {
@@ -38,7 +32,7 @@ const CreatePost = () => {
   // get tags from database
   const axios = useAxios();
   const { data: tags = [] } = useQuery({
-    queryKey: "tags",
+    queryKey: ["tags"],
     queryFn: async () => {
       const res = await axios.get("/tags");
       return res.data;
@@ -50,6 +44,7 @@ const CreatePost = () => {
     label: tag.tag,
   }));
   const onSubmit = (data) => {
+    // take only value
     const postTag = data.postTags.map((tag) => tag.value);
     const { postTags, ...rest } = data;
     const postData = {
@@ -60,6 +55,7 @@ const CreatePost = () => {
       userPhoto: user.photoURL,
       UpVote: 0,
       DownVote: 0,
+      Comments: 0,
       postTime: new Date().toISOString(),
     };
     axiosSecure.post("/post", postData).then((res) => {

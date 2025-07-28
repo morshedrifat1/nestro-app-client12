@@ -67,7 +67,13 @@ const MakeAnnouncement = () => {
               <div className="relative mt-2.5">
                 <input
                   type="text"
-                  {...register("annTitle", { required: true })}
+                  {...register("annTitle", {
+                    required: "Title is required",
+                    maxLength: {
+                      value: 40,
+                      message: "Title cannot exceed 50 characters",
+                    },
+                  })}
                   placeholder="Enter a Announcement Title"
                   className="pl-10 border-2 border-mainborder w-full bg-base-100 p-2.5 rounded-lg text-sm text-base-content focus:outline focus:outline-offset-2 focus:outline-border-outline"
                 />
@@ -77,18 +83,23 @@ const MakeAnnouncement = () => {
                 />
               </div>
               {/* error message for Announcement title */}
-              {errors.annTitle?.type === "required" && (
-                <p className="text-red-700 mt-1.5">
-                  Enter a Announcement Title *
-                </p>
+              {errors.annTitle && (
+                <p className="text-red-700 mt-1.5">{errors.annTitle.message}</p>
               )}
+
               <label className="text-base-300/80 mt-4 block font-medium text-sm">
                 Announcement Description
               </label>
               <div className="relative mt-2.5">
                 <textarea
                   type="text"
-                  {...register("annDesc", { required: true })}
+                  {...register("annDesc", {
+                    required: "Description is required",
+                    maxLength: {
+                      value: 250,
+                      message: "Description cannot exceed 200 characters",
+                    },
+                  })}
                   placeholder="Write a Announcement Description"
                   className="pl-10 h-30 border-2 border-mainborder w-full bg-base-100 p-2.5 rounded-lg text-sm text-base-content focus:outline focus:outline-offset-2 focus:outline-border-outline"
                 />
@@ -98,10 +109,8 @@ const MakeAnnouncement = () => {
                 />
               </div>
               {/* error message for Announcement Description */}
-              {errors.annDesc?.type === "required" && (
-                <p className="text-red-700 mt-1.5">
-                  Write a Announcement Description *
-                </p>
+              {errors.annDesc && (
+                <p className="text-red-700 mt-1.5">{errors.annDesc.message}</p>
               )}
               <button
                 type="submit"

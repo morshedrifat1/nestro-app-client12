@@ -1,7 +1,14 @@
 import { Search } from "lucide-react";
 import React from "react";
+import { HashLink } from "react-router-hash-link";
 
-const HeroSection = () => {
+const HeroSection = ({ setSearch }) => {
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const searchText = e.target.tag.value;
+    setSearch(searchText);
+  };
+
   return (
     <div className="relative h-screen sm:h-[calc(100vh-68px)] w-full bg-boxbg flex items-center justify-center">
       <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#9494942e_1px,transparent_1px),linear-gradient(to_bottom,#9494942e_1px,transparent_1px)] bg-[size:25px_26px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_0%,transparent_140%)]"></div>
@@ -13,21 +20,26 @@ const HeroSection = () => {
         <h1 className="text-center text-3xl leading-10 sm:text-5xl sm:leading-14 md:text-6xl md:leading-18 font-extrabold max-w-210 bg-gradient-to-b from-base-300 to-base-100  text-transparent bg-clip-text">
           Join the Conversation. Share Ideas. Connect Freely 🚀
         </h1>
-        <form>
+        <form onSubmit={handleSearch}>
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative mt-1.5 mx-auto">
-            <input
-              type="email"
-              name="tag"
-              placeholder="Search posts by tag..."
-              className="pl-10 border-2 border-mainborder sm:w-100 bg-base-100 p-3 rounded-lg text-sm text-base-content focus:outline focus:outline-offset-2 focus:outline-border-outline"
-            />
-            <Search
-              size={18}
-              className="absolute top-1/2 -translate-y-1/2 left-3 text-base-content "
-            />
-          </div>
-          <button className="bg-base-300 mx-auto px-5 py-2.5 mt-1.5 text-base-100  rounded-lg" type="submit">Search</button>
+              <input
+                type="text"
+                name="tag"
+                placeholder="Search posts by tag..."
+                className="pl-10 border-2 border-mainborder sm:w-100 bg-base-100 p-3 rounded-lg text-sm text-base-content focus:outline focus:outline-offset-2 focus:outline-border-outline"
+              />
+              <Search
+                size={18}
+                className="absolute top-1/2 -translate-y-1/2 left-3 text-base-content "
+              />
+            </div>
+            <button
+              className="bg-base-300 mx-auto px-5 py-2.5 mt-1.5 text-base-100  rounded-lg"
+              type="submit"
+            >
+              <HashLink smooth to="/#post-section"></HashLink> Search
+            </button>
           </div>
         </form>
       </div>

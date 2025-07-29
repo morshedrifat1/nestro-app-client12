@@ -8,7 +8,7 @@ const Footer = () => {
   const { isDark } = use(ThemeContext);
 
   return (
-    <div className="bg-boxbg py-10 mt-15">
+    <div className="bg-boxbg py-10 ">
       <div className="max-w-[1420px] rounded-lg mx-auto px-5">
         <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center justify-between">
           <div>

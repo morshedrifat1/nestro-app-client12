@@ -36,7 +36,7 @@ const Posts = ({search}) => {
     }
 
   return (
-    <div className="my-10" id="post-section">
+    <div className="mt-10 mb-15" id="post-section">
       <div className="grid grid-cols-1 gap-y-5 md:grid-cols-3 mt-3 md:gap-5 items-start">
         <div className="col-span-2 space-y-4">
           <div className="flex flex-wrap gap-5 justify-between items-center">

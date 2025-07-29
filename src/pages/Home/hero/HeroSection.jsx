@@ -34,12 +34,14 @@ const HeroSection = ({ setSearch }) => {
                 className="absolute top-1/2 -translate-y-1/2 left-3 text-base-content "
               />
             </div>
-            <button
-              className="bg-base-300 mx-auto px-5 py-2.5 mt-1.5 text-base-100  rounded-lg"
-              type="submit"
-            >
-              <HashLink smooth to="/#post-section"></HashLink> Search
-            </button>
+            <HashLink smooth to="/#post-section">
+              <button
+                className="bg-base-300 mx-auto px-5 py-2.5 mt-1.5 text-base-100 rounded-lg cursor-pointer"
+                type="submit"
+              >
+                Search
+              </button>
+            </HashLink>
           </div>
         </form>
       </div>

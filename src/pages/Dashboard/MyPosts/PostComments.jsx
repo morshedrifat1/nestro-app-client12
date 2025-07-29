@@ -83,7 +83,7 @@ const PostComments = () => {
                     No
                   </th>
                   <th className="bg-base-100 text-heading text-sm whitespace-nowrap">
-                    Email
+                    Commenter Email
                   </th>
                   <th className="bg-base-100 text-heading text-sm whitespace-nowrap">
                     Comment

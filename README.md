@@ -1,12 +1,62 @@
-# React + Vite
+# 🧠 Forum App — MERN Stack Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack forum-style application where users can create posts, interact through comments, and vote on others’ content. Includes powerful admin dashboard features, membership system, and Firebase-based authentication and authorization.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Technologies Used
 
-## Expanding the ESLint configuration
+### Frontend
+- **Vite**
+- **React**
+- **React Router**
+- **Tailwind CSS**
+- **TanStack Query (React Query)**
+- **Axios**
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Backend
+- **Node.js**
+- **Express.js**
+- **MongoDB**
+- **Firebase Admin SDK (for Authorization)**
+
+---
+
+## 🔐 Authentication & Authorization
+
+- ✅ **Authentication**: Handled via **Firebase Authentication**
+  - 📧 Email & Password
+  - 🔐 **Google Sign-In (OAuth)**
+- 🔒 **Authorization**: Protected backend routes using **Firebase Admin SDK** with custom token verification middleware.
+- 👥 Role-based access:
+  - `User`
+  - `Admin`
+
+---
+
+## 🌟 Features
+
+### 🧑‍💻 User Features
+
+- 🔐 **Login/Signup via Google or Email**
+- 📝 **Post Creation**: 
+  - Bronze users: Can create up to **5 posts**
+  - Gold users: Can create **unlimited posts** after payment
+- 🔼 **Upvote / Downvote** any post
+- 💬 **Comment** on any post
+- 🚩 **Report Comments** for review
+- 📋 **Dashboard** to manage own posts and posts comments
+
+### 👑 Membership System
+
+- 🥉 **Bronze (default)**: Max 5 posts
+- 🥇 **Gold**: Pay **$90** to unlock unlimited posting
+
+### 🛠️ Admin Features
+
+- 👥 **Manage User Roles** (Make Admin, Demote, etc.)
+- ⚠️ **Review Reported Comments** (Delete if needed)
+- 📊 **Site Statistics**:
+  - Total Users
+  - Total Posts
+  - Total Comments

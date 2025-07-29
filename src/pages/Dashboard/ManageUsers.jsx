@@ -1,6 +1,6 @@
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
-import { ShieldCheck, UserCheck, X } from "lucide-react";
+import { Award, Crown, ShieldCheck, UserCheck, X } from "lucide-react";
 import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpiner from "../../components/loadingSpiner/LoadingSpiner";
@@ -124,7 +124,14 @@ const ManageUsers = () => {
                     {user.email}
                   </td>
                   <td className="text-base-content whitespace-nowrap">
-                    {user.membership}
+                    <p className="flex items-center gap-1 bg-base-300 w-fit px-3 text-sm font-medium py-0.5 rounded-full text-base-100 border border-mainborder mt-1">
+                      {user.membership === "Bronze" ? (
+                        <Award size={15}></Award>
+                      ) : (
+                        <Crown size={15}></Crown>
+                      )}
+                      {user.membership}
+                    </p>
                   </td>
                   <td className="text-heading whitespace-nowrap">
                     <button

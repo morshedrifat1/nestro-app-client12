@@ -1,16 +1,16 @@
 import { Search } from "lucide-react";
 import React from "react";
-import { HashLink } from "react-router-hash-link";
-
 const HeroSection = ({ setSearch }) => {
   const handleSearch = (e) => {
     e.preventDefault();
     const searchText = e.target.tag.value;
     setSearch(searchText);
+    const section = document.getElementById("post-section");
+    section?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div className="relative h-screen sm:h-[calc(100vh-68px)] w-full bg-boxbg flex items-center justify-center">
+    <div className="relative h-[700px] sm:h-[calc(100vh-68px)] w-full bg-boxbg flex items-center justify-center">
       <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#9494942e_1px,transparent_1px),linear-gradient(to_bottom,#9494942e_1px,transparent_1px)] bg-[size:25px_26px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_0%,transparent_140%)]"></div>
       {/* hero main content */}
       <div className="z-10 space-y-5 flex flex-col items-center px-5">
@@ -21,7 +21,7 @@ const HeroSection = ({ setSearch }) => {
           Join the Conversation. Share Ideas. Connect Freely 🚀
         </h1>
         <form onSubmit={handleSearch}>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap justify-center items-center gap-3">
             <div className="relative mt-1.5 mx-auto">
               <input
                 type="text"
@@ -34,14 +34,15 @@ const HeroSection = ({ setSearch }) => {
                 className="absolute top-1/2 -translate-y-1/2 left-3 text-base-content "
               />
             </div>
-            <HashLink smooth to="/#post-section">
-              <button
-                className="bg-base-300 mx-auto px-5 py-2.5 mt-1.5 text-base-100 rounded-lg cursor-pointer"
-                type="submit"
-              >
-                Search
-              </button>
-            </HashLink>
+
+            <button
+              className="bg-base-300 mx-auto px-5 py-2.5 mt-1.5 text-base-100 rounded-lg cursor-pointer"
+              type="submit"
+              value=""
+            >
+              {" "}
+              Search
+            </button>
           </div>
         </form>
       </div>

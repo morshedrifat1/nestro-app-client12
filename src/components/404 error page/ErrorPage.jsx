@@ -11,7 +11,7 @@ const ErrorPage = () => {
           <Lottie animationData={error} />
         </div>
         <Link
-          className="bg-base-300 text-accent shadow-none py-2 rounded-lg justify-center mx-auto flex items-center gap-2 w-[150px]"
+          className="bg-black text-white shadow-none py-2 rounded-lg justify-center mx-auto flex items-center gap-2 w-[150px]"
           to={"/"}
         >
           <ArrowLeft className="mt-1" size={20} />

@@ -10,7 +10,7 @@ const Membership = () => {
 
   useEffect(()=>{
     if (userProfile.membership === "Gold") {
-    navigate("dashboard/user-profile");
+    navigate("/dashboard/user-profile");
   }
   },[userProfile.membership,navigate])
 

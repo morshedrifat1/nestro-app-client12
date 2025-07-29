@@ -41,7 +41,7 @@ const Header = () => {
         </NavLink>
       </li>
 
-      {(!user || userProfile.membership !== "Gold")&& (
+      {(!user || userProfile.membership !== "Gold") && (
         <li className="text-base font-medium">
           <NavLink
             className={({ isActive }) =>
@@ -71,18 +71,20 @@ const Header = () => {
           Home
         </NavLink>
       </li>
-      <li className="text-base font-medium">
-        <NavLink
-          className={({ isActive }) =>
-            isActive
-              ? "text-navlink bg-subHeading  px-4 py-1.5 rounded-lg"
-              : "hover:bg-subHeading px-4 py-1.5 rounded-lg text-navlink"
-          }
-          to={"/membership"}
-        >
-          Membership
-        </NavLink>
-      </li>
+      {(!user || userProfile.membership !== "Gold") && (
+        <li className="text-base font-medium">
+          <NavLink
+            className={({ isActive }) =>
+              isActive
+                ? "text-navlink bg-subHeading  px-4 py-1.5 rounded-lg"
+                : "hover:bg-subHeading px-4 py-1.5 rounded-lg text-navlink"
+            }
+            to={"/membership"}
+          >
+            Membership
+          </NavLink>
+        </li>
+      )}
       {user && (
         <li className="text-base font-medium">
           <NavLink
@@ -160,13 +162,15 @@ const Header = () => {
                 tabIndex={0}
                 className="menu menu-sm dropdown-content bg-boxbg rounded-box z-1 mt-6 w-52 p-2 space-y-2 "
               >
-                <li>
-                  <div className="avatar space-x-2 py-2.5">
-                    <div className="ring-btn ring-offset-base-100 w-8 h-8 rounded-full ring-1 ring-offset-2">
-                      <img src={user && user?.photoURL} />
+                {user && (
+                  <li>
+                    <div className="avatar space-x-2 py-2.5">
+                      <div className="ring-btn ring-offset-base-100 w-8 h-8 rounded-full ring-1 ring-offset-2">
+                        <img src={user && user?.photoURL} />
+                      </div>
                     </div>
-                  </div>
-                </li>
+                  </li>
+                )}
                 {mobileNavlink}
                 <li>
                   {user ? (

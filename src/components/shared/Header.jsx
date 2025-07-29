@@ -20,7 +20,7 @@ const Header = () => {
   // total anouncements
   const axios = useAxios();
   const { data: announcement = [] } = useQuery({
-    queryKey: "announcement",
+    queryKey: ["announcement"],
     queryFn: async () => {
       const res = await axios.get("/announcements");
       return res.data;

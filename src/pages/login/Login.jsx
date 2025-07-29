@@ -10,9 +10,11 @@ import useAuth from "../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import Toast from "../../components/toast/Toast";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import axios from "axios";
 const Login = () => {
   const [seePasswor, setSeepassword] = useState(false);
-  const { userLogin, googleSignin } = useAuth();
+  const { userLogin, googleSignin,user } = useAuth();
+  const [loader,setLoader] = useState(false);
   const axiosSecure = useAxiosSecure();
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,43 +25,48 @@ const Login = () => {
     reset,
     formState: { errors },
   } = useForm();
-const onSubmit = async (data) => {
-  try {
-    await userLogin(data.email, data.password);
-    await axiosSecure.post("/post-user", { email: data.email });
-
-    Toast({ type: "success", message: "Sign in successful" });
-    navigate(location.state ? `${location.state}` : "/", { replace: true });
-    reset();
-  } catch (error) {
-    Toast({ type: "error", message: error.message });
-  }
-};
+  const onSubmit = async (data) => {
+    setLoader(true)
+    try {
+      await userLogin(data.email, data.password);
+      if(user){
+        await axios.post("/post-user", { email: data.email });
+      }
+      Toast({ type: "success", message: "Sign in successful" });
+      navigate(location.state ? `${location.state}` : "/", { replace: true });
+      reset();
+    } catch (error) {
+      Toast({ type: "error", message: error.message });
+    }
+  };
   // google login
-const handleGoogleSignin = async () => {
-  try {
-    const result = await googleSignin();
-    const user = result.user;
+  const handleGoogleSignin = async () => {
+    try {
+      const result = await googleSignin();
+      const user = result.user;
 
-    const userInfo = {
-      email: user.email,
-      name: user.displayName,
-      role: "user",
-      membership: "Bronze",
-      joined: new Date().toISOString(),
-      lastLogin: new Date().toISOString(),
-    };
+      setTimeout(async() => {
+        if (user) {
+        const userInfo = {
+          email: user.email,
+          name: user.displayName,
+          role: "user",
+          membership: "Bronze",
+          joined: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+        };
+        await axiosSecure.post("/post-user", userInfo);
+      }
+      }, 2000);
 
-    await axiosSecure.post("/post-user", userInfo);
-
-    Toast({ type: "success", message: "Sign in successful" });
-    navigate(location.state ? `${location.state}` : "/", {
-      replace: true,
-    });
-  } catch (error) {
-    Toast({ type: "error", message: error.message });
-  }
-};
+      Toast({ type: "success", message: "Sign in successful" });
+      navigate(location.state ? `${location.state}` : "/", {
+        replace: true,
+      });
+    } catch (error) {
+      Toast({ type: "error", message: error.message });
+    }
+  };
 
   return (
     <div className="bg-base-100 flex justify-center items-center h-auto sm:min-h-200">
@@ -126,11 +133,10 @@ const handleGoogleSignin = async () => {
             {errors.email?.type === "required" && (
               <p className="text-red-700 mt-1.5">Enter Your Password *</p>
             )}
-            <input
+            <button
               type="submit"
-              value="Login"
               className="w-full mt-5 py-2 rounded-lg cursor-pointer bg-primary text-accent"
-            />
+            >{loader?<span className="loading loading-dots loading-sm"></span>:'Login'}</button>
           </form>
           <div className="divider text-sm uppercase mt-6 text-base-content">
             Or continue with

@@ -25,8 +25,8 @@ const Pagination = ({setCurrentPage,totalPages,currentPage}) => {
       </button>
 
       {/* pages */}
-      {pagesArray.map((page) => (
-        <button
+      {pagesArray.map((page,index) => (
+        <button key={index}
         onClick={() => handlePageChange(page)}
           className={`px-3 py-2 sm:px-3.5 rounded-md border cursor-pointer ${
             currentPage === page

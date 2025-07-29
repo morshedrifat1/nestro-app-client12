@@ -93,8 +93,8 @@ const UserProfile = () => {
           <div className="border border-mainborder bg-boxbg mt-5 p-5 rounded-lg">
             <h1 className="text-base-300 text-lg font-bold">Recent Posts</h1>
             <div className="space-y-4 mt-4">
-              {userProfile?.recentPosts?.map((post)=>
-              <div className="bg-subHeading p-4 rounded-lg">
+              {userProfile?.recentPosts?.map((post,index)=>
+              <div key={index} className="bg-subHeading p-4 rounded-lg">
                 <h1 className="text-base-300 text-base font-medium">{post.postTitle} <span className="text-sm font-normal">• {getTimeAgo(post?.postTime)}</span></h1>
                 <p className="mt-1 text-sm font-normal text-base-content">{post.postDescription}</p>
                 <Link to={`/post-details/${post._id}`} className="bg-base-300 text-accent px-3 py-1 rounded-lg inline-block mt-2">Details</Link>

@@ -6,28 +6,33 @@ import { useQuery } from "@tanstack/react-query";
 import LoadingSpiner from "../../components/loadingSpiner/LoadingSpiner";
 import { useState } from "react";
 import { GoMail } from "react-icons/go";
+import Pagination from "../../components/Pagination/Pagination";
 
 const ManageUsers = () => {
   const axiosSecure = useAxiosSecure();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { loader } = useAuth();
-  const [api, setApi] = useState("/users");
+  const [email, setEmail] = useState("");
 
   const {
     data: users = [],
     refetch,
     isLoading,
   } = useQuery({
-    queryKey: ["users", api],
+    queryKey: ["users", email, currentPage],
     queryFn: async () => {
-      const res = await axiosSecure.get(api);
-      console.log(res);
-      return res.data;
+      const res = await axiosSecure.get(
+        `/users?page=${currentPage}&limit=10&email=${email}`
+      );
+      setTotalPages(res.data.totalPages);
+      return res.data.users;
     },
   });
   const hadleSearch = (e) => {
     e.preventDefault();
     const email = e.target.value;
-    setApi(`/users?email=${email}`);
+    setEmail(email);
   };
   const handelAdmin = (id) => {
     Swal.fire({
@@ -138,6 +143,16 @@ const ManageUsers = () => {
               ))}
             </tbody>
           </table>
+        )}
+      </div>
+      {/* pagination */}
+      <div className="my-4">
+        {totalPages > 1 && (
+          <Pagination
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+            totalPages={totalPages}
+          ></Pagination>
         )}
       </div>
     </>

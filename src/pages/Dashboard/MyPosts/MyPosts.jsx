@@ -6,23 +6,29 @@ import NoDataFound from "../../../components/noDataFound/NoDataFound";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { Link } from "react-router";
+import { useState } from "react";
+import Pagination from "../../../components/Pagination/Pagination";
 
 const MyPosts = () => {
   const axiosSecure = useAxiosSecure();
   const { user, loader } = useAuth();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const {
     data: posts = [],
     refetch,
-    isLoading
+    isLoading,
   } = useQuery({
-    queryKey: ["userPost", user?.email],
+    queryKey: ["userPost", user?.email,currentPage],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/posts?email=${user?.email}`);
-      console.log(res);
-      return res.data;
+      const res = await axiosSecure.get(
+        `/posts?email=${user.email}&page=${currentPage}&limit=10`
+      );
+      setTotalPages(res.data.totalPages);
+      return res.data.posts;
     },
   });
-  console.log(posts);
+  // console.log(posts);
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -53,17 +59,16 @@ const MyPosts = () => {
       }
     });
   };
-  console.log(posts);
   return (
     <>
-      {loader || isLoading? (
+      {loader || isLoading ? (
         <LoadingSpiner></LoadingSpiner>
       ) : posts.length === 0 ? (
         <NoDataFound
           title={"No Data Found"}
           description={"You haven’t posted anything yet."}
-          buttonText={'Create Post'}
-          url={'/dashboard/create-post'}
+          buttonText={"Create Post"}
+          url={"/dashboard/create-post"}
         ></NoDataFound>
       ) : (
         <div className="overflow-x-auto border border-mainborder rounded-box shadow-2xs shadow-accent">
@@ -102,8 +107,12 @@ const MyPosts = () => {
                     {post.UpVote + post.DownVote}
                   </td>
                   <td className="text-base-content whitespace-nowrap">
-                    <Link to={`/dashboard/comments/${post._id}`} className="bg-primary text-accent px-4 py-1.5 rounded-lg inline-flex items-center gap-2 cursor-pointer">
-                      Comments {post?.postComments.length} <MessageCircleMore size={15}></MessageCircleMore>
+                    <Link
+                      to={`/dashboard/comments/${post._id}`}
+                      className="bg-primary text-accent px-4 py-1.5 rounded-lg inline-flex items-center gap-2 cursor-pointer"
+                    >
+                      Comments {post?.postComments.length}{" "}
+                      <MessageCircleMore size={15}></MessageCircleMore>
                     </Link>
                   </td>
 
@@ -121,6 +130,16 @@ const MyPosts = () => {
           </table>
         </div>
       )}
+      {/* pagination */}
+      <div className="my-4">
+        {totalPages > 1 && (
+          <Pagination
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+            totalPages={totalPages}
+          ></Pagination>
+        )}
+      </div>
     </>
   );
 };

@@ -3,7 +3,7 @@ import PostCard from "./PostCard";
 import Tags from "../tags/Tags";
 import useAxios from "../../../hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
-import Pagination from "../../../components/Pagination";
+import Pagination from "../../../components/Pagination/Pagination";
 import LoadingSpiner from "../../../components/loadingSpiner/LoadingSpiner";
 import Announcement from "../announcement/Announcement";
 
@@ -12,9 +12,7 @@ const Posts = ({search}) => {
   const [sortPopuler,setSortPopuer] = useState('');
   const [searchTag,setSearchTag] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1)
-console.log(totalPages);
-
+  const [totalPages, setTotalPages] = useState(1);
   const queryParams = {
       page:currentPage,
       limit: 5,
@@ -22,14 +20,12 @@ console.log(totalPages);
       tag:searchTag,
       search
     }
-    console.log(queryParams);
   const {
       data: posts = [],isLoading,refetch
     } = useQuery({
       queryKey: ["posts",queryParams],
       queryFn: async () => {
         const res = await axios.get('/all-posts',{ params: queryParams });
-        console.log(res.data);
         setTotalPages(res.data.totalPages)
         return res.data.posts;
       }
@@ -51,8 +47,8 @@ console.log(totalPages);
               </button>
             </div>
           </div>
-          {posts.map((post) => (
-            <PostCard setSearchTag={setSearchTag} post={post} refetch={refetch}></PostCard>
+          {posts.map((post,index) => (
+            <PostCard key={index} setSearchTag={setSearchTag} post={post} refetch={refetch}></PostCard>
           ))}
           {(totalPages>1)&&<Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages}></Pagination>}
           

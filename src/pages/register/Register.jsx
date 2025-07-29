@@ -13,9 +13,11 @@ import useAuth from "../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import Toast from "../../components/toast/Toast";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import axios from "axios";
 const Register = () => {
   const [seePasswor, setSeepassword] = useState(false);
-  const {userSignUp, googleSignin} = useAuth();
+  const { userSignUp, googleSignin } = useAuth();
+  const [loader,setLoader] = useState(false);
   const axiosSecure = useAxiosSecure();
   const { isDark } = use(ThemeContext);
   const location = useLocation();
@@ -27,80 +29,83 @@ const Register = () => {
     reset,
     formState: { errors },
   } = useForm();
-  
+
   const onSubmit = async (data) => {
-  try {
-    // 1. User sign up
-    const userCredential = await userSignUp(data.email, data.password);
-    const user = userCredential.user;
+    try {
+      setLoader(true)
+      // 1. User sign up
+      const userCredential = await userSignUp(data.email, data.password);
+      const user = userCredential.user;
 
-    // 2. Upload profile picture to imgbb
-    const profilePic = data.profilePic[0];
-    const formData = new FormData();
-    formData.append("image", profilePic);
+      // 2. Upload profile picture to imgbb
+      const profilePic = data.profilePic[0];
+      const formData = new FormData();
+      formData.append("image", profilePic);
 
-    const res = await axios.post(
-      `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API}`,
-      formData
-    );
-    const profilePicUrl = res.data.data.url;
+      const res = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API}`,
+        formData
+      );
+      const profilePicUrl = res.data.data.url;
 
-    // 3. Update Firebase user profile
-    await updateProfile(user, {
-      displayName: data.name,
-      photoURL: profilePicUrl,
-    });
+      // 3. Update Firebase user profile
+      await updateProfile(user, {
+        displayName: data.name,
+        photoURL: profilePicUrl,
+      });
 
-    // 4. Prepare user info for database
-    const userInfo = {
-      email: data.email,
-      name: data.name,
-      role: "user",
-      membership: "Bronze",
-      joined: new Date().toISOString(),
-      lastLogin: new Date().toISOString(),
-    };
+      // 4. Prepare user info for database
+      const userInfo = {
+        email: data.email,
+        name: data.name,
+        role: "user",
+        membership: "Bronze",
+        joined: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+      };
 
-    // 5. Save user to your database
-    await axiosSecure.post("/post-user", userInfo);
+      // 5. Save user to your database
+      await axiosSecure.post("/post-user", userInfo);
 
-    // 6. Success actions
-    Toast({ type: "success", message: "Sign in successful" });
-    reset();
-    navigate(location?.state ? `${location?.state}` : "/", {
-      replace: true,
-    });
-  } catch (error) {
-    Toast({ type: "error", message: error.message });
-  }
-};
-
+      // 6. Success actions
+      Toast({ type: "success", message: "Sign in successful" });
+      reset();
+      navigate(location?.state ? `${location?.state}` : "/", {
+        replace: true,
+      });
+    } catch (error) {
+      Toast({ type: "error", message: error.message });
+    }
+  };
 
   // google sign in
-const handleGoogleSignin = async () => {
-  try {
-    const result = await googleSignin();
-    const user = result.user;
+  const handleGoogleSignin = async () => {
+    try {
+      const result = await googleSignin();
+      const user = result.user;
 
-    const userInfo = {
-      email: user.email,
-      name: user.displayName,
-      role: "user",
-      membership: "Bronze",
-      joined: new Date().toISOString(),
-      lastLogin: new Date().toISOString(),
-    };
+      setTimeout(async () => {
+        if (user) {
+          const userInfo = {
+            email: user.email,
+            name: user.displayName,
+            role: "user",
+            membership: "Bronze",
+            joined: new Date().toISOString(),
+            lastLogin: new Date().toISOString(),
+          };
+          await axiosSecure.post("/post-user", userInfo);
+        }
+      }, 2000);
 
-    await axiosSecure.post("/post-user", userInfo);
-
-    Toast({ type: "success", message: "Sign in successful" });
-    navigate(location.state ? `${location.state}` : "/", {
-      replace: true,
-    });
-  } catch (error) {
-    Toast({ type: "error", message: error.message });
-  }
-};
+      Toast({ type: "success", message: "Sign in successful" });
+      navigate(location.state ? `${location.state}` : "/", {
+        replace: true,
+      });
+    } catch (error) {
+      Toast({ type: "error", message: error.message });
+    }
+  };
   return (
     <div className="bg-base-100 flex justify-center items-center h-auto sm:min-h-230">
       <div className="w-full shadow-0 sm:w-2/3 lg:w-1/3 bg-boxbg sm:shadow p-10 rounded-lg">
@@ -231,11 +236,10 @@ const handleGoogleSignin = async () => {
             {errors.password && (
               <p className="text-red-700 mt-1.5">{errors.password.message}</p>
             )}
-            <input
+            <button
               type="submit"
-              value="Sign Up"
               className="w-full mt-5 py-2 rounded-lg cursor-pointer bg-primary text-accent"
-            />
+            > {loader?<span className="loading loading-dots loading-sm"></span>:'Sign Up'}</button>
           </form>
           <div className="divider text-sm uppercase mt-6 text-base-content">
             Or continue with

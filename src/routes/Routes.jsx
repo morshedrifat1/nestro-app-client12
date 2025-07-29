@@ -18,10 +18,12 @@ import Register from "../pages/register/Register";
 import AdminRoutes from "./AdminRoutes";
 import PrivateRoutes from "./PrivateRoutes";
 import PostComments from "../pages/Dashboard/MyPosts/PostComments";
+import ErrorPage from "../components/404 error page/ErrorPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
+    errorElement:<ErrorPage></ErrorPage>,
     Component: MainLayout,
     children: [
       { index: true, Component: Home },

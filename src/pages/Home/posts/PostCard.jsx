@@ -80,8 +80,8 @@ const PostCard = ({ post, refetch,setSearchTag }) => {
         </span>
       </p>
       <div className="flex flex-wrap gap-3 mt-3">
-        {post?.postTag.map((tag) => (
-          <button onClick={()=>setSearchTag(tag)} className="border bg-subHeading border-mainborder px-2.5 text-navlink text-sm rounded-full cursor-pointer">
+        {post?.postTag.map((tag,index) => (
+          <button key={index} onClick={()=>setSearchTag(tag)} className="border bg-subHeading border-mainborder px-2.5 text-navlink text-sm rounded-full cursor-pointer">
             # {tag}
           </button>
         ))}

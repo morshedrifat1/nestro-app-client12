@@ -32,7 +32,6 @@ const AllComment = ({ setCommentRefetch }) => {
     const getTimeAgo = (createdAt) => {
       return formatDistanceToNow(new Date(createdAt), { addSuffix: true });
     };
-    console.log(comments);
   return (
     <div>
       {comments.map((comment) => (

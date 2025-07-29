@@ -19,8 +19,8 @@ const Announcement = () => {
           <h1 className="text-base-300 text-xl font-bold">Announcements 📢</h1>
 
           <div>
-            {announcement.map((anno) => (
-              <div className="mt-3 bg-base-100 rounded-lg border-mainborder p-3">
+            {announcement.map((anno,index) => (
+              <div key={index} className="mt-3 bg-base-100 rounded-lg border-mainborder p-3">
                 <h1 className="text-base-300 text-lg font-semibold">
                   {anno?.annTitle}
                 </h1>

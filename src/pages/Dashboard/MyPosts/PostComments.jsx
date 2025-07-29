@@ -1,13 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  ChevronLeft,
-  CircleAlert,
-  Eye,
-  Flag,
-  MessageCircleMore,
-  X,
-} from "lucide-react";
-import Swal from "sweetalert2";
+import { ChevronLeft, CircleAlert, Eye } from "lucide-react";
 import LoadingSpiner from "../../../components/loadingSpiner/LoadingSpiner";
 import NoDataFound from "../../../components/noDataFound/NoDataFound";
 import useAuth from "../../../hooks/useAuth";
@@ -15,6 +7,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { Link } from "react-router";
 import { useParams } from "react-router";
 import { useState } from "react";
+import Pagination from "../../../components/Pagination/Pagination";
 
 const PostComments = () => {
   const axiosSecure = useAxiosSecure();
@@ -23,16 +16,20 @@ const PostComments = () => {
   const params = useParams();
   const [selectedReports, setSelectedReports] = useState({});
   const [disabledButtons, setDisabledButtons] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const {
     data: comments = [],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["comments", params.postId],
+    queryKey: ["comments", params.postId, currentPage],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/comments-report/${params.postId}`);
-      console.log(res);
-      return res.data;
+      const res = await axiosSecure.get(
+        `/comments-report/${params.postId}?page=${currentPage}&limit=10`
+      );
+      setTotalPages(res.data.totalPages);
+      return res.data.comments;
     },
   });
   const handleSelectChange = (commentId, value) => {
@@ -49,7 +46,6 @@ const PostComments = () => {
         if (res.data.modifiedCount) {
           refetch();
           setDisabledButtons((prev) => ({ ...prev, [id]: true }));
-          console.log(res);
         }
       });
   };
@@ -180,6 +176,16 @@ const PostComments = () => {
                 </div>
               </dialog>
             </div>
+          </div>
+          {/* pagination */}
+          <div className="my-4">
+            {totalPages > 1 && (
+              <Pagination
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                totalPages={totalPages}
+              ></Pagination>
+            )}
           </div>
         </div>
       )}

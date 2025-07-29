@@ -23,7 +23,6 @@ const TagAddForm = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
         Toast({ type: "error", message: error.response.data.message });
       });
   };

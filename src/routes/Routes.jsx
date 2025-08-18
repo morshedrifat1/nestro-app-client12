@@ -19,6 +19,8 @@ import AdminRoutes from "./AdminRoutes";
 import PrivateRoutes from "./PrivateRoutes";
 import PostComments from "../pages/Dashboard/MyPosts/PostComments";
 import ErrorPage from "../components/404 error page/ErrorPage";
+import Privacy from "../pages/Privacy/Privacy";
+import RefundPolicy from "../pages/RefundPolicy/RefundPolicy";
 
 export const router = createBrowserRouter([
   {
@@ -31,7 +33,9 @@ export const router = createBrowserRouter([
       { path: "post-details/:id", Component: PostDetails },
       { path: "auth/login", Component: Login },
       { path: "auth/register", Component: Register },
-      { path: "payment", Component: Payment },
+      { path: "payment", element: <PrivateRoutes><Payment></Payment></PrivateRoutes> },
+      { path: "privacy", Component: Privacy },
+      { path: "refundPolicy", Component: RefundPolicy },
     ],
   },
   {

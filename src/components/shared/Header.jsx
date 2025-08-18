@@ -55,6 +55,30 @@ const Header = () => {
           </NavLink>
         </li>
       )}
+        <li className="text-base font-medium">
+          <NavLink
+            className={({ isActive }) =>
+              isActive
+                ? "text-navlink bg-subHeading  px-4 py-1.5 rounded-lg"
+                : "hover:bg-subHeading px-4 py-1.5 rounded-lg text-navlink"
+            }
+            to={"/dashboard/create-post"}
+          >
+            Create Post
+          </NavLink>
+        </li>
+        <li className="text-base font-medium">
+          <NavLink
+            className={({ isActive }) =>
+              isActive
+                ? "text-navlink bg-subHeading  px-4 py-1.5 rounded-lg"
+                : "hover:bg-subHeading px-4 py-1.5 rounded-lg text-navlink"
+            }
+            to={"/dashboard/my-post"}
+          >
+            My Post
+          </NavLink>
+        </li>
     </>
   );
   const mobileNavlink = (
@@ -107,7 +131,7 @@ const Header = () => {
       <li className="flex items-center gap-2 bg-subHeading px-4 py-1.5 rounded-lg text-navlink">
         {" "}
         <User></User>
-        {user?.displayName}
+        <NavLink to={'/dashboard/user-profile'}>{user?.displayName}</NavLink>
       </li>
       <li className="text-base font-medium">
         <NavLink
